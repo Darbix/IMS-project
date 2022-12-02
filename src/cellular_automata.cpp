@@ -150,7 +150,7 @@ tuple <uint8_t, uint8_t, uint8_t>getStateColor(CType cType){
         case oxygen:
                 return make_tuple(210,210,210);
         case water:
-                return make_tuple(180,145,13);
+                return make_tuple(200,145,13);
         case weak:
                 return make_tuple(70,80,70);
         default:

@@ -88,6 +88,7 @@ int main(int argc, char **argv){
     unsigned cntToxic = 0;      // Counter of toxic cells
     unsigned cntWeak = 0;       // Counter of weak cells
 
+    printf("------------------------------------------------------------------------\n");
     printf("%d FPS, %.1f kg, %d ppm, %d ml toothpaste volume, %.1f %% food fullness\n", fps, weight, ppm, toothpasteVolume, fullness * 100);
 
     // Main loop
@@ -112,7 +113,7 @@ int main(int argc, char **argv){
 
         // Print the stats every X minutes (X * ITERS_PER_MINUTE) iterations
         if(!(iters % (20 * ITERS_PER_MINUTE)) || iters == 0){
-            printf("--------------------------- %3d min --------------------------\n", iters / ITERS_PER_MINUTE);
+            printf("-------------------------------- %3d min -------------------------------\n", iters / ITERS_PER_MINUTE);
             printf("Iteration: %d\n", iters);
             printf("Oxygen: %.2f %% of blood volume\n", 100.0 * cntOxygen / cntBlood);
             printf("Oxygen saturation: %.2f %%\n", min(100.0, 100.0 * cntOxygen / amountOxygen));
@@ -169,12 +170,20 @@ int main(int argc, char **argv){
 
         // Show the image
         imshow(window, plane);
-        moveWindow(window, 100, 100);
+        moveWindow(window, 240, 137);
         // Clear the plane matrix TODO probably useless
         plane.setTo(Scalar(0,0,0));
+        
         // Wait (1000 ms / fps) seconds and continue or exit by a key press
-        if(waitKey(1000 / fps) >= 0)
-            break;
+        // If fps == 0, use default fps 30 and enable stop on click (exit with CTRL+C)
+        if(waitKey(1000 / (fps? fps: 30)) >= 0){
+            if(!fps){
+                if(waitKey() < 0)
+                    continue;
+            }
+            else
+                break;
+        }
      }
 
     return(0);
