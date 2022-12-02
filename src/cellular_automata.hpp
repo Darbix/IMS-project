@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <tuple>
 
-#define SIZE 500    ///< Size of the window in pixels
+#define SIZE 700    ///< Size of the window in pixels
 #define N_WIDTH 100 ///< Size of the cellurar automata (Number of cells in each row)
 #define MAX_STEP 2  ///< Maximal cell step for a random movement
 

@@ -91,10 +91,10 @@ void placeOxygenCells(CA *ca, unsigned *amountBlood, unsigned *amountOxygen){
     }
 }
 
-void placeFluorideCells(CA *ca, unsigned *amountFluoride, float weight, unsigned ppm, float amountEaten, unsigned amountBlood){
+void placeFluorideCells(CA *ca, unsigned *amountFluoride, float weight, unsigned ppm, unsigned toothpasteVolume, unsigned amountBlood){
     unsigned volumeBlood = weight * BLOOD_PER_KG * 1000; // Average human blood volume in litres
     // Volume of fluoride expressed as a percentage of blood
-    double percFluoride = ((amountEaten * ppm / PPM_MG_DIVIDER) / DENSITY_FLUORIDE) / volumeBlood;
+    double percFluoride = 1000 * ((ppm * DENSITY_TOOTHPASTE) * (toothpasteVolume / 1000.0)) / DENSITY_FLUORIDE / (1000 * volumeBlood);
     // Calculate a concrete number of fluoride cells to be placed
     unsigned nFluoride = amountBlood * percFluoride; // Initial max number of fluoride cells
     // Percentage of fluoride cells relative to a right side area

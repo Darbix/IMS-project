@@ -88,11 +88,11 @@ Rules::Rules(){
             {CType::any, CType::oxygen, CType::toxic},
             {CType::any, CType::any, CType::any}
         }, CType::weak},
-        {{
-            {CType::weak, CType::any, CType::any},
-            {CType::oxygen, CType::any ^ CType::toxic, CType::any},
-            {CType::any, CType::any, CType::any}
-        }, CType::weak},
+        // {{
+        //     {CType::weak, CType::any, CType::any},
+        //     {CType::oxygen, CType::any ^ CType::toxic, CType::any},
+        //     {CType::any, CType::any, CType::any}
+        // }, CType::weak}, TODO
         {{
             {CType::any, CType::weak, CType::any},
             {CType::blood, CType::oxygen, CType::weak},
@@ -140,7 +140,7 @@ tuple <uint8_t, uint8_t, uint8_t>getStateColor(CType cType){
         case tissue:
             return make_tuple(130,170,190);
         case toxic:
-                return make_tuple(250,0,110);
+                return make_tuple(250,0,50);
         case fluoride:
                 return make_tuple(255,0,0);
         case blood:
@@ -150,7 +150,7 @@ tuple <uint8_t, uint8_t, uint8_t>getStateColor(CType cType){
         case oxygen:
                 return make_tuple(210,210,210);
         case water:
-                return make_tuple(235,180,25);
+                return make_tuple(180,145,13);
         case weak:
                 return make_tuple(70,80,70);
         default:
@@ -294,7 +294,7 @@ void CA::randomMove(CType moveType, float fullness){
             
             // Conditionally move the current cell
             if(this->curr[i][j] == moveType && simlib3::Random() <= probToMove){
-                // Random move at any of 3x3 positions (1/9 probability)
+                // Random move at any of 3x3 positions (1/9 probability) for MAX_STEP == 1
                 unsigned y = getCellCoord(i + lround(simlib3::Random() * stepRange - MAX_STEP));
                 unsigned x = getCellCoord(j + lround(simlib3::Random() * stepRange - MAX_STEP));
 

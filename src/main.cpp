@@ -2,6 +2,7 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/videoio.hpp>
+#include <opencv2/core/utils/logger.hpp>
 
 #include <iostream>
 #include <tuple>
@@ -15,16 +16,18 @@
 using namespace cv;
 using namespace std;
 
-#define EXCRETE_MINUTES 120     ///< Average time until the fluoride starts excretion to livers
-#define ITERS_PER_MINUTE 10     ///< How many iterations is approximately 1 minute
+#define EXCRETE_MINUTES 120         ///< Average time until the fluoride starts excretion to livers
+#define ITERS_PER_MINUTE 10         ///< How many iterations is approximately 1 minute
 
-unsigned fps = 2;               ///< FPS 
-float weight = 40;              ///< Person weight in kg
-unsigned ppm = 1500;            ///< PPM toothpaste units
-float amountEaten = 1.0;        ///< Eaten amount of a whole toothpaste percentile
-float fullness = 0.25;          ///< Approximate food stomach fullness percentile
+unsigned fps = 2;                   ///< FPS 
+float weight = 40;                  ///< Person weight in kg
+unsigned ppm = 1500;                ///< PPM toothpaste units
+unsigned toothpasteVolume = 100;    ///< Toothpaste volume eaten in ml
+float fullness = 0.25;              ///< Approximate food stomach fullness percentile
 
 int main(int argc, char **argv){
+    utils::logging::setLogLevel(cv::utils::logging::LogLevel::LOG_LEVEL_SILENT);
+
     int c;
     try{
         while ((c = getopt(argc, argv, "s:w:p:e:f:")) != -1){
@@ -38,8 +41,8 @@ int main(int argc, char **argv){
                 case 'p': // PPM of a toothpaste
                     ppm = stoi(optarg);
                     break;
-                case 'e': // Eaten amount of the toothpaste
-                    amountEaten = atof(optarg);
+                case 'v': // Eaten amount of the toothpaste
+                    toothpasteVolume = stoi(optarg);
                     break;
                 case 'f': // Fullness
                     fullness = atof(optarg);
@@ -76,7 +79,7 @@ int main(int argc, char **argv){
 
     // Right side random placement of a certain number of fluorides
     unsigned amountFluoride = 0; // Amount of fluoride cells at the start
-    placeFluorideCells(ca, &amountFluoride, weight, ppm, amountEaten, amountBlood);
+    placeFluorideCells(ca, &amountFluoride, weight, ppm, toothpasteVolume, amountBlood);
 
     unsigned iters = 0;         // Counter of iterations
     unsigned cntFluoride = 0;   // Counter of fluoride cells
@@ -85,7 +88,7 @@ int main(int argc, char **argv){
     unsigned cntToxic = 0;      // Counter of toxic cells
     unsigned cntWeak = 0;       // Counter of weak cells
 
-    printf("%d FPS, %.1f kg, %d ppm, %.1f %% eaten, %.1f %% food fullness\n", fps, weight, ppm, amountEaten * 100, fullness * 100);
+    printf("%d FPS, %.1f kg, %d ppm, %d ml toothpaste volume, %.1f %% food fullness\n", fps, weight, ppm, toothpasteVolume, fullness * 100);
 
     // Main loop
     while(true){
@@ -111,9 +114,9 @@ int main(int argc, char **argv){
         if(!(iters % (20 * ITERS_PER_MINUTE)) || iters == 0){
             printf("--------------------------- %3d min --------------------------\n", iters / ITERS_PER_MINUTE);
             printf("Iteration: %d\n", iters);
-            printf("Oxygen: %.2f %% of blood volume\n", 100.0 * cntOxygen/cntBlood);
-            printf("Oxygen saturation: %.2f %%\n", min(100.0, 100.0 * cntOxygen/amountOxygen));
-            printf("Fluoride in tissues %.2f mg F/kg body weight\n", (cntToxic * ppm / PPM_MG_DIVIDER) / amountFluoride / weight);
+            printf("Oxygen: %.2f %% of blood volume\n", 100.0 * cntOxygen / cntBlood);
+            printf("Oxygen saturation: %.2f %%\n", min(100.0, 100.0 * cntOxygen / amountOxygen));
+            printf("Fluoride in tissues %.2f mg F/kg body weight\n", (1.0 * cntToxic / amountFluoride * (ppm * DENSITY_TOOTHPASTE) * (toothpasteVolume / 1000.0)) / weight);
         }
 
         // Random movement of fluoride cells
@@ -166,8 +169,8 @@ int main(int argc, char **argv){
 
         // Show the image
         imshow(window, plane);
-        moveWindow(window, 200, 200);
-        // Clear the plane matrix
+        moveWindow(window, 100, 100);
+        // Clear the plane matrix TODO probably useless
         plane.setTo(Scalar(0,0,0));
         // Wait (1000 ms / fps) seconds and continue or exit by a key press
         if(waitKey(1000 / fps) >= 0)
