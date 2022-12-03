@@ -1,3 +1,13 @@
+/**
+ * @file grid.hpp
+ * @author David Kedra, xkedra00
+ * @author Petr Kolařík, xkolar79
+ * @brief Declarations of grid initialization functions 
+ * 
+ * IMS Project - Cellular automata
+ * VUT FIT Brno, 2022/2023 
+ */
+
 #pragma once
 
 #include <opencv2/opencv.hpp>

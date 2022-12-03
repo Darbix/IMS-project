@@ -1,3 +1,13 @@
+/**
+ * @file grid.cpp
+ * @author David Kedra, xkedra00
+ * @author Petr Kolařík, xkolar79
+ * @brief Grid initialization functions 
+ * 
+ * IMS Project - Cellular automata
+ * VUT FIT Brno, 2022/2023 
+ */
+
 #include "grid.hpp"
 
 void drawCell(Mat &plane, unsigned x, unsigned y, CType cType){

@@ -1,8 +1,17 @@
+/**
+ * @file main.cpp
+ * @author David Kedra, xkedra00
+ * @author Petr Kolařík, xkolar79
+ * @brief Main loop
+ * 
+ * IMS Project - Cellular automata
+ * VUT FIT Brno, 2022/2023 
+ */
+
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/videoio.hpp>
-#include <opencv2/core/utils/logger.hpp>
 
 #include <iostream>
 #include <tuple>
@@ -17,20 +26,19 @@ using namespace cv;
 using namespace std;
 
 #define EXCRETE_MINUTES 120         ///< Average time until the fluoride starts excretion to livers
-#define ITERS_PER_MINUTE 10         ///< How many iterations is approximately 1 minute
+#define ITERS_PER_MINUTE 12         ///< How many iterations is approximately 1 minute
 
-unsigned fps = 2;                   ///< FPS 
-float weight = 40;                  ///< Person weight in kg
-unsigned ppm = 1500;                ///< PPM toothpaste units
-unsigned toothpasteVolume = 100;    ///< Toothpaste volume eaten in ml
-float fullness = 0.25;              ///< Approximate food stomach fullness percentile
 
 int main(int argc, char **argv){
-    utils::logging::setLogLevel(cv::utils::logging::LogLevel::LOG_LEVEL_SILENT);
+    unsigned fps = 1;                   // FPS 
+    float weight = 40;                  // Person weight in kg
+    unsigned ppm = 1500;                // PPM toothpaste units
+    unsigned toothpasteVolume = 100;    // Toothpaste volume eaten in ml
+    float fullness = 0.25;              // Approximate food stomach fullness percentile
 
     int c;
     try{
-        while ((c = getopt(argc, argv, "s:w:p:e:f:")) != -1){
+        while ((c = getopt(argc, argv, "s:w:p:v:f:")) != -1){
             switch (c){
                 case 's': // Speed of drawing
                     fps = stoi(optarg);
@@ -91,6 +99,10 @@ int main(int argc, char **argv){
     printf("------------------------------------------------------------------------\n");
     printf("%d FPS, %.1f kg, %d ppm, %d ml toothpaste volume, %.1f %% food fullness\n", fps, weight, ppm, toothpasteVolume, fullness * 100);
 
+    // Introducing a non-deterministic assumption of eaten amount
+    // Toothpaste volume = volume + (0.00 to 0.33) * volume
+    toothpasteVolume += (int)(toothpasteVolume * simlib3::Random() / 3);
+
     // Main loop
     while(true){
         for(unsigned y = 0; y < N_WIDTH; y++){
@@ -117,7 +129,7 @@ int main(int argc, char **argv){
             printf("Iteration: %d\n", iters);
             printf("Oxygen: %.2f %% of blood volume\n", 100.0 * cntOxygen / cntBlood);
             printf("Oxygen saturation: %.2f %%\n", min(100.0, 100.0 * cntOxygen / amountOxygen));
-            printf("Fluoride in tissues %.2f mg F/kg body weight\n", (1.0 * cntToxic / amountFluoride * (ppm * DENSITY_TOOTHPASTE) * (toothpasteVolume / 1000.0)) / weight);
+            printf("Fluoride in blood %.2f mg F/kg body weight\n", (1.0 * cntToxic / amountFluoride * (ppm * DENSITY_TOOTHPASTE) * (toothpasteVolume / 1000.0)) / weight);
         }
 
         // Random movement of fluoride cells

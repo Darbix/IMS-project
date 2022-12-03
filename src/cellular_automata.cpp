@@ -1,3 +1,13 @@
+/**
+ * @file cellular_automata.cpp
+ * @author David Kedra, xkedra00
+ * @author Petr Kolařík, xkolar79
+ * @brief Cullular automata and rules 
+ * 
+ * IMS Project - Cellular automata
+ * VUT FIT Brno, 2022/2023 
+ */
+
 #include <simlib.h>
 #include <iostream>
 #include <cmath>
@@ -88,11 +98,6 @@ Rules::Rules(){
             {CType::any, CType::oxygen, CType::toxic},
             {CType::any, CType::any, CType::any}
         }, CType::weak},
-        // {{
-        //     {CType::weak, CType::any, CType::any},
-        //     {CType::oxygen, CType::any ^ CType::toxic, CType::any},
-        //     {CType::any, CType::any, CType::any}
-        // }, CType::weak}, TODO
         {{
             {CType::any, CType::weak, CType::any},
             {CType::blood, CType::oxygen, CType::weak},

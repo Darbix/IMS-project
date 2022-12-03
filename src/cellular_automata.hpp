@@ -1,3 +1,13 @@
+/**
+ * @file cellular_automata.hpp
+ * @author David Kedra, xkedra00
+ * @author Petr Kolařík, xkolar79
+ * @brief Declarations of Cullular automata and rules 
+ * 
+ * IMS Project - Cellular automata
+ * VUT FIT Brno, 2022/2023 
+ */
+
 #pragma once
 
 #include <vector>
